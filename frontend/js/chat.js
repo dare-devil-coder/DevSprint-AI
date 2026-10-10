@@ -3,6 +3,7 @@ import { QUESTIONS } from "./timeline.js";
 
 const history = document.getElementById("chat-history");
 const composer = document.getElementById("chat-composer");
+const notices = [];
 
 /** Create and append one safely escaped message using textContent. */
 function addMessage(role, message) {
@@ -29,7 +30,7 @@ export function renderChat(state, onStart, onAnswer) {
     const heading = document.createElement("h2");
     heading.textContent = "A working project starts here.";
     const copy = document.createElement("p");
-    copy.textContent = "Describe a small Python tool. We’ll clarify it, write the code, run the tests, and research a fix if it fails.";
+    copy.textContent = "Describe a product, website, or tool. We’ll clarify the important details, build a working prototype, and verify it against your requirements.";
     welcome.append(heading, copy);
     history.append(welcome);
     renderForm("idea", onStart);
@@ -37,9 +38,10 @@ export function renderChat(state, onStart, onAnswer) {
   }
   addMessage("user", state.idea);
   state.answers.forEach((answer, index) => {
-    addMessage("agent", QUESTIONS[index]);
+    addMessage("agent", state.questions?.[index] || QUESTIONS[index]);
     addMessage("user", answer);
   });
+  notices.forEach((notice) => addMessage("agent", notice));
   if (state.phase === "questions") {
     addMessage("agent", state.question);
     renderForm("answer", onAnswer);
@@ -58,6 +60,26 @@ export function renderChat(state, onStart, onAnswer) {
   }
 }
 
+/** Add an in-session update for skill activation or explanation generation. */
+export function addSystemMessage(message) {
+  if (!notices.includes(message)) notices.push(message);
+  addMessage("agent", message);
+}
+
+/** Reset transient notices when a new project or clean demo starts. */
+export function clearSystemMessages() {
+  notices.length = 0;
+}
+
+/** Prefill the existing idea composer without submitting it. */
+export function setSampleIdea(idea) {
+  const input = composer.querySelector("textarea");
+  if (input) {
+    input.value = idea;
+    input.focus();
+  }
+}
+
 /** Render a labeled textarea with Enter-to-send and a visible busy state. */
 function renderForm(mode, submit) {
   const form = document.createElement("form");
@@ -69,7 +91,7 @@ function renderForm(mode, submit) {
   input.className = "chat__input";
   input.required = true;
   input.maxLength = 4000;
-  input.placeholder = mode === "idea" ? "Build me a CLI tool that converts Celsius to Fahrenheit…" : "Type your answer here…";
+  input.placeholder = mode === "idea" ? "Build a reading tracker website with a calm editorial style…" : "Type your answer here…";
   label.append(input);
   const actions = document.createElement("div");
   actions.className = "chat__actions";

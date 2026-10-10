@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+.tmp/
 memory/*.json
 workspace/*
 !memory/.gitkeep
@@ -13,3 +14,5 @@ workspace/*
 .idea/
 .DS_Store
 .impeccable/review/
+demo_evidence/runtime/
+demo_evidence/live_runtime/

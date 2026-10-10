@@ -168,7 +168,7 @@ devsprint-ai/
   tests/
     test_agents.py
     test_serpapi.py
-  .env.example                   SERPAPI_API_KEY, OPENAI_API_KEY
+  .env.example                   SerpApi and LLM provider key names
   requirements.txt
   README.md
 

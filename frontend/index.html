@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0a0a0f">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0f'/%3E%3Cpath d='M8 23V15m8 8V8m8 15v-11' stroke='%2300d4aa' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
   <title>DevSprint AI — Plan, build, verify</title>
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/app.js"></script>
@@ -12,7 +13,7 @@
 <body>
   <header class="topbar">
     <div class="brand"><span class="brand__mark" aria-hidden="true"><span></span><span></span><span></span></span><span>DevSprint <strong>AI</strong></span></div>
-    <div class="topbar__right"><span class="topbar__label">FROM IDEA TO RUNNING PYTHON</span><div id="header-status" class="status-pill" role="status"><span class="status-pill__dot"></span><span>Ready to build</span></div></div>
+    <div class="topbar__right"><span class="topbar__label">From idea to working prototype</span><button id="new-project" class="topbar__action" type="button" aria-haspopup="dialog">+ New Project</button><button id="demo-mode" class="topbar__action" type="button">Demo Mode</button><button id="open-settings" class="topbar__action" type="button" aria-haspopup="dialog">Settings</button><div id="header-status" class="status-pill" role="status"><span class="status-pill__dot"></span><span>Ready to build</span></div></div>
   </header>
   <main class="workspace">
     <section class="panel panel--chat" aria-labelledby="chat-title">
@@ -22,28 +23,33 @@
     </section>
     <section class="panel panel--timeline" aria-labelledby="timeline-title">
       <div class="panel__head"><div><h2 id="timeline-title">Build sequence</h2><p>Watch each step turn your idea into tested code.</p></div><span class="panel__index">02</span></div>
-      <div class="timeline__intro"><span class="timeline__intro-dot"></span><span id="phase-copy">Waiting for your idea</span><span id="attempt-copy"></span></div>
+      <div id="demo-banner" class="demo-banner" role="status" hidden>Demo ready. Use the sample idea below, then answer each question to run the pipeline.</div>
+      <div class="skills-strip"><span class="skills-strip__label">Active skills</span><div id="active-skills" class="skills-strip__items" aria-live="polite"><span class="skills-strip__empty">Skills appear as agents work.</span></div></div>
+      <div class="timeline__intro"><span class="timeline__intro-dot"></span><span id="phase-copy">Waiting for your idea</span><span id="attempt-copy"></span><button id="resume-build" class="timeline__resume" type="button" hidden>Resume build</button></div>
       <ol id="agent-timeline" class="timeline" aria-live="polite"></ol>
-      <div class="timeline__archify"><div><strong>Architecture diagrams</strong><span>Workflow, files, and data flow</span></div><button id="open-archify" class="timeline__archify-button" type="button" disabled>View diagrams →</button></div>
+      <div class="timeline__archify"><div><strong>Architecture diagrams</strong><span>Workflow, files, and data flow</span></div><div class="timeline__archify-actions"><button id="review-plan" class="timeline__archify-button" type="button" hidden>Review plan</button><button id="open-archify" class="timeline__archify-button" type="button" disabled>View diagrams →</button></div><span id="archify-message" class="timeline__archify-message" role="status"></span></div>
       <div class="timeline__footer"><span class="timeline__footer-dot"></span> Repairs use live search results from SerpApi.</div>
     </section>
     <section class="panel panel--viewer" aria-labelledby="viewer-title">
-      <div class="panel__head"><div><h2 id="viewer-title">Project viewer</h2><p>Contract, source files, execution, and search trail.</p></div><span class="panel__index">03</span></div>
+      <div class="panel__head"><div><h2 id="viewer-title">Project viewer</h2><p>Live preview, source files, tests, and search trail.</p></div><span class="panel__index">03</span></div>
       <div id="viewer-tabs" class="viewer__tabs" role="tablist" aria-label="Project files"></div>
-      <div class="viewer__surface"><div id="viewer-caption" class="viewer__caption">No project selected</div><pre id="viewer-content" class="viewer__content" tabindex="0">Your contract and generated files will appear here as the agents work.</pre><div id="viewer-verification" class="viewer__verification" hidden></div></div>
+        <div id="viewer-content-area" class="viewer__surface" role="tabpanel" tabindex="0"><div id="viewer-caption" class="viewer__caption">No project selected</div><pre id="viewer-content" class="viewer__content" tabindex="0">Your prototype preview and generated files will appear here as the agents work.</pre><iframe id="viewer-preview" class="viewer__preview" title="Generated project preview" sandbox="allow-scripts allow-modals" hidden></iframe><div id="viewer-verification" class="viewer__verification" hidden></div><div id="viewer-details" class="viewer__details" hidden></div></div>
       <div id="viewer-message" class="viewer__message" role="status"></div>
     </section>
   </main>
   <dialog id="approval-modal" class="approval-modal" aria-labelledby="approval-title">
-    <div class="approval-modal__head"><h2 id="approval-title">Review the build plan</h2><p>The contract and architecture are ready. Check the scope before coding starts.</p></div>
+    <div class="approval-modal__head"><div><h2 id="approval-title">Review the build plan</h2><p>The contract and architecture are ready. Check the scope before coding starts.</p></div><button id="close-approval" class="icon-button" type="button" aria-label="Close plan review">×</button></div>
     <div class="approval-modal__body">
       <section class="approval-modal__column"><h3>Project contract</h3><pre id="approval-contract" class="approval-modal__json"></pre><textarea id="approval-edit" class="approval-modal__edit" aria-label="Edit contract JSON" hidden></textarea></section>
       <section class="approval-modal__column"><h3>Architecture plan</h3><div id="approval-plan"></div></section>
     </div>
     <section class="approval-modal__diagrams"><h3>Archify diagrams</h3><div id="approval-archify"></div></section>
-    <div class="approval-modal__footer"><span id="approval-message" role="status">No code runs until you approve.</span><div class="approval-modal__actions"><button id="edit-contract" class="button button--secondary" type="button">Edit Contract</button><button id="approve-build" class="button" type="button">Approve &amp; Build</button></div></div>
+    <div class="approval-modal__footer"><span id="approval-message" role="status">No code runs until you approve.</span><div class="approval-modal__actions"><button id="retry-approval" class="button button--secondary" type="button" hidden>Retry loading plan</button><button id="edit-contract" class="button button--secondary" type="button">Edit Contract</button><button id="approve-build" class="button" type="button">Approve &amp; Build</button></div></div>
   </dialog>
   <dialog id="archify-dialog" class="archify-dialog" aria-labelledby="archify-title"><div class="archify-dialog__head"><h2 id="archify-title">Architecture diagrams</h2><button id="close-archify" type="button" aria-label="Close diagrams">×</button></div><div id="architecture-archify"></div></dialog>
-  <footer class="page-footer"><span>DevSprint AI <span class="page-footer__separator">/</span> Phase 2</span><span>Requirements → Approval → Build → Verify</span></footer>
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title"><form id="settings-form" method="dialog"><div class="settings-dialog__head"><div><h2 id="settings-title">Project settings</h2><p>Choose how much guidance to generate for this project.</p></div><button id="close-settings" class="icon-button" type="button" aria-label="Close settings">×</button></div><div class="settings-dialog__body"><label class="settings-dialog__toggle" for="generate-details"><span><strong>Generate Project Details folder</strong><small>Create two learner explanations after the build. Deeper levels stay on demand.</small></span><input id="generate-details" type="checkbox"></label><div class="settings-dialog__field"><label for="skill-level"><strong>Skill level</strong><small>Adjust how explanations address you.</small></label><select id="skill-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div></div><div class="settings-dialog__footer"><span id="settings-message" role="status"></span><button id="save-settings" class="button" type="submit">Save settings</button></div></form></dialog>
+  <dialog id="new-project-dialog" class="settings-dialog" aria-labelledby="new-project-title"><form id="new-project-form"><div class="settings-dialog__head"><div><h2 id="new-project-title">Start a new project</h2><p>Describe what you want to build. DevSprint will clarify the requirements, then show you a plan to approve.</p></div><button id="close-new-project" class="icon-button" type="button" aria-label="Close new project">×</button></div><div class="settings-dialog__body"><label class="settings-dialog__field" for="new-project-idea"><strong>Project idea</strong><textarea id="new-project-idea" class="chat__input" required minlength="3" maxlength="4000" placeholder="Build a reading tracker website with a calm editorial style…"></textarea></label><small class="new-project__note">Starting this project replaces the active project and its search log. Existing generated files stay in the workspace.</small></div><div class="settings-dialog__footer"><span id="new-project-message" role="status"></span><button id="submit-new-project" class="button" type="submit">Start project →</button></div></form></dialog>
+  <dialog id="demo-dialog" class="settings-dialog" aria-labelledby="demo-title"><div class="settings-dialog__head"><div><h2 id="demo-title">Start a clean demo?</h2><p>This removes saved projects, generated files, and search logs from this local app.</p></div><button id="close-demo" class="icon-button" type="button" aria-label="Close demo confirmation">×</button></div><div class="settings-dialog__footer"><span id="demo-message" role="status">The sample idea will be ready to submit.</span><button id="confirm-demo" class="button" type="button">Clear and prepare demo</button></div></dialog>
+  <footer class="page-footer"><span>DevSprint AI <span class="page-footer__separator">/</span> Phase 3</span><span>Requirements → Approval → Build → Verify</span></footer>
 </body>
 </html>

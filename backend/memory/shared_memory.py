@@ -4,6 +4,7 @@
 import json
 import os
 import tempfile
+import time
 from pathlib import Path
 from threading import RLock
 from typing import Any
@@ -20,6 +21,9 @@ SERPAPI_LOG_FILE = MEMORY_DIR / "serpapi_log.json"
 OUTPUT_FILE = MEMORY_DIR / "output.json"
 PLAN_FILE = MEMORY_DIR / "plan.json"
 VERIFICATION_FILE = MEMORY_DIR / "verification.json"
+DECISIONS_FILE = MEMORY_DIR / "decisions.json"
+PROJECT_DETAILS_CACHE_FILE = MEMORY_DIR / "project_details_cache.json"
+SETTINGS_FILE = MEMORY_DIR / "settings.json"
 _lock = RLock()
 
 
@@ -43,7 +47,14 @@ def write_json(path: str | Path, data: Any) -> None:
             with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
                 json.dump(data, stream, indent=2, ensure_ascii=False)
                 stream.write("\n")
-            os.replace(temporary, target)
+            for attempt in range(6):
+                try:
+                    os.replace(temporary, target)
+                    break
+                except PermissionError:
+                    if attempt == 5:
+                        raise
+                    time.sleep(0.05 * (attempt + 1))
         finally:
             if os.path.exists(temporary):
                 os.unlink(temporary)

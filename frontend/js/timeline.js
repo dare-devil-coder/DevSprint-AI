@@ -10,9 +10,9 @@ const steps = [
   { name: "Requirements", description: "Clarify the project contract", icon: "?" },
   { name: "Architecture", description: "Plan files and criteria", icon: "◇" },
   { name: "Approval", description: "Review contract and plan", icon: "○" },
-  { name: "Coder", description: "Write Python source", icon: "</>" },
+  { name: "Coder", description: "Build the project source", icon: "</>" },
   { name: "Test Writer", description: "Write acceptance tests", icon: "✓" },
-  { name: "Executor", description: "Run the code and tests", icon: "▶" },
+  { name: "Executor", description: "Run prototype and acceptance checks", icon: "▶" },
   { name: "Self-Healing", description: "Research and apply a fix", icon: "↻" },
   { name: "Verifier", description: "Check each requirement", icon: "◎" },
   { name: "Doc Agent", description: "Write project README", icon: "≡" },
@@ -24,8 +24,10 @@ export function renderTimeline(project = {}) {
   const list = document.getElementById("agent-timeline");
   const active = project.agent || "";
   const phase = project.phase || "";
-  if (phase === "questions" && !project.answers?.length) states.clear();
+  if (!project.idea || (phase === "questions" && !project.answers?.length)) states.clear();
   const items = steps.map((step) => {
+    const description = step.name === "Coder" && project.project_type === "web_app"
+      ? "Build the responsive web prototype" : step.description;
     let status = project.completed_agents?.includes(step.name) ? "done" :
       states.get(step.name) || "idle";
     if (phase === "questions" && step.name === "Requirements") status = "working";
@@ -34,7 +36,7 @@ export function renderTimeline(project = {}) {
       status = phase === "awaiting_approval" ? "working" : project.approved ? "done" : "idle";
     }
     if (phase === "error" && step.name === active) status = "error";
-    return { ...step, status };
+    return { ...step, description, status };
   });
   list.replaceChildren();
   items.forEach((step) => {
@@ -64,6 +66,7 @@ export function renderTimeline(project = {}) {
     "REVISION " + project.verification_retry + "/3" :
     project.attempt ? "RUN " + project.attempt : "";
   document.getElementById("open-archify").disabled = !project.completed_agents?.includes("Architecture");
+  document.getElementById("review-plan").hidden = phase !== "awaiting_approval";
   const pill = document.getElementById("header-status");
   pill.className = "status-pill" + (["building", "planning", "questions"].includes(phase) ? " status-pill--working" : "") +
     (phase === "error" ? " status-pill--error" : "");

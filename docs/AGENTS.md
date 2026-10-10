@@ -7,7 +7,7 @@ working, tested code. It uses SerpApi for real-time search during self-healing.
 ## Tech Stack
   Backend:  Python 3.10+, FastAPI, uvicorn, serpapi, python-dotenv, pydantic, openai
   Frontend: HTML5, CSS3, vanilla JavaScript (ES6+), WebSocket API
-  LLM:      OpenAI API
+  LLM:      OpenRouter, Groq, NVIDIA, Gemini; optional OpenAI fallback
   No frameworks: No React, Vue, or Angular. Pure HTML/CSS/JS only.
   No ORM:   JSON files for memory. No database.
 

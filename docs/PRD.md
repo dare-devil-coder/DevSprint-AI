@@ -44,7 +44,7 @@ AI Agents
 ## 7. Constraints
 - Frontend: HTML, CSS, JavaScript only (no frameworks)
 - Backend: Python (FastAPI for API layer, subprocess for code execution)
-- LLM: One provider (OpenAI or Anthropic)
+- LLM: Capability-routed providers with automatic fallback (OpenRouter, Groq, NVIDIA, Gemini; optional OpenAI)
 - Sandbox: Local subprocess (Docker is a later phase)
 - Max retries in self-healing loop: 5
 - No vector DB, no embeddings, no RAG (plain JSON files for memory)

@@ -1,0 +1,31 @@
+{
+  "calls": [
+    {
+      "timestamp": "2026-10-10T15:10:31.226325+00:00",
+      "query": "python Traceback (most recent call last): File \"D:\\Hackathon 2026\\SerpAPI\\demo_evidence\\live_runtime\\workspace\\celsius_to_fahrenheit\\main.py\", line 1, in <module> import devsprint_missing fix",
+      "results_count": 3,
+      "cached": false,
+      "agent": "self_healing_agent",
+      "error_context": "Traceback (most recent call last):\n  File \"D:\\Hackathon 2026\\SerpAPI\\demo_evidence\\live_runtime\\workspace\\celsius_to_fahrenheit\\main.py\", line 1, in <module>\n    import devsprint_missing_dependency_for_browser_e2e\nModuleNotFoundError: No module named 'devsprint_missing_dependency_for_browser_e2e'",
+      "error": ""
+    },
+    {
+      "timestamp": "2026-10-10T15:10:39.443039+00:00",
+      "query": "python .....F [100%] ================================== FAILURES =================================== _________________ test_graceful_handling_of_non_numeric_input _________________ monkey fix",
+      "results_count": 3,
+      "cached": false,
+      "agent": "self_healing_agent",
+      "error_context": ".....F                                                                   [100%]\n================================== FAILURES ===================================\n_________________ test_graceful_handling_of_non_numeric_input _________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001E01DE4A010>\ncapsys = <_pytest.capture.CaptureFixture object at 0x000001E01DE4A790>\n\n    def test_graceful_handling_of_non_numeric_input(monkeypatch, capsys) -> None:\n        # Acceptance: Graceful handling of non\\u2011numeric input\n        monkeypatch.setattr(sys, \"argv\", [\"prog\", \"abc\"])\n        with pytest.raises(SystemExit) as excinfo:\n            main.main()\n        captured = capsys.readouterr()\n>       assert \"Error: Invalid input\" in captured.err\nE       assert 'Error: Invalid input' in \"usage: prog [-h] celsius\\nprog: error: argument celsius: invalid float value: 'abc'\\n\"\nE        +  where \"usage: prog [-h] celsius\\nprog: error: argument celsius: invalid float value: 'abc'\\n\" = CaptureResult(out='', err=\"usage: prog [-h] celsius\\nprog: error: argument celsius: invalid float value: 'abc'\\n\").err\n\ntest_main.py:21: AssertionError\n=========================== short test summary info ===========================\nFAILED test_main.py::test_graceful_handling_of_non_numeric_input - assert 'Er...\n1 failed, 5 passed in 0.07s",
+      "error": ""
+    },
+    {
+      "timestamp": "2026-10-10T15:10:45.878912+00:00",
+      "query": "python .....F [100%] ================================== FAILURES =================================== _________________ test_graceful_handling_of_non_numeric_input _________________ monkey fix",
+      "results_count": 3,
+      "cached": true,
+      "agent": "self_healing_agent",
+      "error_context": ".....F                                                                   [100%]\n================================== FAILURES ===================================\n_________________ test_graceful_handling_of_non_numeric_input _________________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002156D1F2F90>\ncapsys = <_pytest.capture.CaptureFixture object at 0x000002156D1FA250>\n\n    def test_graceful_handling_of_non_numeric_input(monkeypatch, capsys) -> None:\n        # Acceptance: Graceful handling of non\\u2011numeric input\n        monkeypatch.setattr(sys, \"argv\", [\"prog\", \"abc\"])\n        with pytest.raises(SystemExit) as excinfo:\n            main.main()\n        captured = capsys.readouterr()\n        assert \"invalid float value\" in captured.err\n>       assert excinfo.value.code == 1\nE       assert 2 == 1\nE        +  where 2 = SystemExit(2).code\nE        +    where SystemExit(2) = <ExceptionInfo SystemExit(2) tblen=6>.value\n\ntest_main.py:22: AssertionError\n=========================== short test summary info ===========================\nFAILED test_main.py::test_graceful_handling_of_non_numeric_input - assert 2 == 1\n1 failed, 5 passed in 0.08s",
+      "error": ""
+    }
+  ]
+}

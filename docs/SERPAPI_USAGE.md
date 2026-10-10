@@ -5,7 +5,7 @@ LLMs hallucinate outdated APIs. When the self-healing loop fixes code, it
 guesses. SerpApi replaces guessing with fact-based fixes.
 
 ## Integration Point
-SerpApi is called ONLY inside self_healing_agent.py. The flow:
+Self-Healing invokes the single SerpApi call path in `backend/serpapi_client.py`. The flow:
 
   1. Executor Agent runs code -> error occurs
   2. Executor writes error to memory/errors.json
